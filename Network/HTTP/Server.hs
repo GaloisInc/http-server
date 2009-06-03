@@ -11,14 +11,10 @@
 
 module Network.HTTP.Server
   ( server, Handler
-  , module HTTP.Exports
+  , Request(..), Response(..), RequestMethod(..)
+  , module Network.HTTP.Headers
   , module Network.HTTP.Server.Response
   ) where
-
--- Re-exported for convenince
-import Network.HTTP.Headers as HTTP.Exports
-import Network.HTTP as HTTP.Exports
-      (Request(..), Response(..), RequestMethod(..))
 
 import Network.HTTP.Server.Utils
 import Network.HTTP.Server.Logger
@@ -32,6 +28,7 @@ import qualified System.Posix.Signals as P
 import Network.Socket
 import Network.BSD
 import Network.HTTP
+import Network.HTTP.Headers   -- for re-export above
 import Network.URI
 import Network.URL
 import Control.Concurrent(forkIO)
@@ -61,7 +58,9 @@ server_init lg host_name port_num = withSocketsDo $
      return s
 
 -- | Handlers invoked to process requests.
-type Handler = SockAddr -> URL -> Request_String -> IO Response_String
+-- The type parameter is for the type of the payload in the body.
+-- It is a variation on string of some sort (e.g., String, ByteString, etc.)
+type Handler a = SockAddr -> URL -> Request a -> IO (Response a)
 
 -- | Start a server.  Parameters:
 --
@@ -73,7 +72,7 @@ type Handler = SockAddr -> URL -> Request_String -> IO Response_String
 --   * The port to listen on
 --
 --   * What do with requests. These are executed in separete threads.
-server :: Logger -> HostName -> PortNumber -> Handler -> IO ()
+server :: HStream a => Logger -> HostName -> PortNumber -> Handler a -> IO ()
 server lg host_name port_num handler = withSocketsDo $
   do s <- server_init lg host_name port_num
      loop s `catch` \e ->
@@ -84,7 +83,7 @@ server lg host_name port_num handler = withSocketsDo $
               forkIO (client client_sock sock_addr)
               loop s
 
-  get_request :: HandleStream String -> IO (Maybe (URL, Request_String))
+  -- get_request :: HandleStream a -> IO (Maybe (URL, Request a))
   get_request sock =
     do mbreq <- receiveHTTP sock
        case mbreq of
@@ -106,13 +105,13 @@ server lg host_name port_num handler = withSocketsDo $
        client_interact addr conn
 
 
-  client_interact :: SockAddr -> HandleStream String -> IO ()
+  -- client_interact :: SockAddr -> HandleStream a -> IO ()
   client_interact addr conn =
     do mbreq <- get_request conn
        resp <- case mbreq of
                  Just (url,req) -> do
                       auth <- authorityToAuth `fmap` getAuth req
-                      handler addr url req { rqURI = (rqURI req) { 
+                      handler addr url req { rqURI = (rqURI req) {
                                                   uriScheme = "http:"
                                                 , uriAuthority = Just auth
                                                 }
@@ -120,10 +119,8 @@ server lg host_name port_num handler = withSocketsDo $
                     `catch` \e ->
                         do logError lg ("Unexpected (1): "
                                         ++ show (e :: SomeException))
-                           return (err_response InternalServerError
-                                      (reason InternalServerError))
-                 Nothing -> return (err_response BadRequest
-                                          (reason BadRequest))
+                           return (err_response InternalServerError)
+                 Nothing -> return (err_response BadRequest)
 
        let resp1 = fromMaybe resp
                  $ do (_,rq)  <- mbreq
@@ -132,10 +129,14 @@ server lg host_name port_num handler = withSocketsDo $
            closing  = case findHeader HdrConnection resp1 of
                         Just "close" -> True
                         _            -> False
+{-
            msg_len  = length (rspBody resp1)
            resp2    = insertHeaderIfMissing HdrContentLength
                                                           (show msg_len) resp1
-           resp3    = insertHeaderIfMissing HdrServer "ML Wiki" resp2
+-}
+           resp2    = resp1
+           resp3    = insertHeaderIfMissing HdrServer
+                          "Haskell HTTP Server" resp2
 
        respondHTTP conn resp3
        if closing
