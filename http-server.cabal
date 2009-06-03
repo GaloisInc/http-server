@@ -1,0 +1,40 @@
+Name:           http-server
+Version:        0.1
+License:        BSD3
+License-file:   LICENSE
+Author:         Galois Inc
+Maintainer:     diatchki@galois.com
+Homepage:       http://code.galois.com/
+Category:       Network
+Synopsis:       A library fro writing Haskell web servers.
+Description:    A library fro writing Haskell web servers.
+Build-type:     Simple
+Cabal-version: >= 1.2
+
+Library
+  Exposed-modules:
+    Network.HTTP.Server
+    Network.HTTP.Server.Logger
+    Network.HTTP.Server.Response
+  Other-modules:
+    Network.HTTP.Server.Utils
+
+  Extensions:
+    CPP
+    UndecidableInstances
+
+  -- Why the commas?
+  Build-depends:
+    base    >= 4          && < 5,
+    network >= 2          && < 3,
+    url     >= 2          && < 3,
+    HTTP    >= 4000.0.7   && < 5000,
+    utf8-string >= 0.3.4  && < 2
+
+  if !os(windows)
+    Build-depends:  unix  >= 2 && < 3
+    CPP-options:    -D_OS_UNIX
+
+  GHC-options:    -O2 -Wall
+
+
