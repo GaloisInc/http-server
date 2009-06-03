@@ -12,6 +12,7 @@
 module Network.HTTP.Server.Response where
 
 import Network.HTTP
+import Network.BufferType
 
 -- | A list of status code.  This not yet complete.
 data StatusCode
@@ -30,17 +31,17 @@ data StatusCode
 -- | Make a simple response with the given staus and body.
 -- Intended to be used for (bad) erros.
 -- Adds a "close" header.
-err_response :: StatusCode -> a -> Response a
-err_response code b = insertHeader HdrConnection "close" (respond code b)
+err_response :: BufferType a => StatusCode -> Response a
+err_response code = insertHeader HdrConnection "close" (respond code)
 
 -- | Make a simple response with the given staus and body.
--- No headers.
-respond :: StatusCode -> a -> Response a
-respond code b = Response
+-- No headers or body.
+respond :: BufferType a => StatusCode -> Response a
+respond code = Response
   { rspCode     = statusCodeTriplet code
   , rspReason   = reason code
   , rspHeaders  = []
-  , rspBody     = b
+  , rspBody     = buf_empty bufferOps
   }
 
 -- | A brief description of what happend.
