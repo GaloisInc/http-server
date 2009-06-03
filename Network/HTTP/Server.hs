@@ -9,7 +9,16 @@
 -- Portability :
 --
 
-module Network.HTTP.Server(Handler,server) where
+module Network.HTTP.Server
+  ( server, Handler
+  , module HTTP.Exports
+  , module Network.HTTP.Server.Response
+  ) where
+
+-- Re-exported for convenince
+import Network.HTTP.Headers as HTTP.Exports
+import Network.HTTP as HTTP.Exports
+      (Request(..), Response(..), RequestMethod(..))
 
 import Network.HTTP.Server.Utils
 import Network.HTTP.Server.Logger
