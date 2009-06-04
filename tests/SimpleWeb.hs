@@ -36,7 +36,7 @@ sendScript   :: StatusCode -> String -> Response String
 sendScript s v  = insertHeader HdrContentType "application/x-javascript"
                 $ sendText s v
 
-
+main :: IO ()
 main = server stdLogger "localhost" 8888 $ \_ url request ->
   print request >>
   case rqMethod request of
@@ -48,8 +48,8 @@ main = server stdLogger "localhost" 8888 $ \_ url request ->
                Right a -> return $ sendScript OK a
                Left e  -> return $ sendHTML NotFound
                                  $ toHtml "Static content not found"
-                 where hack :: SomeException
-                       hack = e
+                 where _hack :: SomeException
+                       _hack = e   -- to specify the type
         ".html" -> return $ sendHTML OK $
                thehtml $ concatHtml
                  [ thead $ concatHtml

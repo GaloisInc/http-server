@@ -1,0 +1,26 @@
+Name:           SimpleWeb
+Version:        0.1
+License:        BSD3
+License-file:   LICENSE
+Author:         Iavor S. Diatchki
+Maintainer:     diatchki@galois.com
+Homepage:       http://code.galois.com/
+Category:       Network
+Synopsis:       An example of using the http-package
+Description:    An example of using the http-package
+Build-type:     Simple
+Cabal-version: >= 1.2
+
+Executable SimpleWeb
+  Main-is:       SimpleWeb.hs
+  Build-depends:
+    base >= 4,
+    http-server,
+    filepath,
+    json,
+    xhtml,
+    utf8-string,
+    url
+  GHC-options: -O -Wall
+
+
