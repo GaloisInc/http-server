@@ -14,7 +14,7 @@ module Network.HTTP.Server.Utils where
 import Network.Socket
 import Data.Word
 import Data.Bits
-#if __GLASGOW_HASKELL__ >= 608
+#ifdef _OS_UNIX
 import Numeric
 #endif
 
@@ -30,7 +30,7 @@ ppHostAddress w = shows (byte w 0) . showChar '.' .
                   shows (byte w 2) . showChar '.' .
                   shows (byte w 3)
 
-#if __GLASGOW_HASKELL__ >= 608
+#if _OS_UNIX
 -- XXX: Are the words in the correct order?
 ppHostAddress6 :: HostAddress6 -> ShowS
 ppHostAddress6 (w1,w2,w3,w4) =
@@ -49,12 +49,10 @@ ppHostAddress6 (w1,w2,w3,w4) =
 ppSockAddr :: SockAddr -> ShowS
 ppSockAddr (SockAddrInet port addr) = ppHostAddress addr
                                     . showChar ':' . shows port
-
-#if __GLASGOW_HASKELL__ >= 608
+#ifdef _OS_UNIX
 ppSockAddr (SockAddrInet6 port _ addr _) =
   ppHostAddress6 addr . showChar ':' . shows port
-#endif
-
 ppSockAddr (SockAddrUnix sock) = showString "unix/" . showString sock
+#endif
 
 
