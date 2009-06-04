@@ -16,6 +16,7 @@ Library
     Network.HTTP.Server
     Network.HTTP.Server.Logger
     Network.HTTP.Server.Response
+    Network.HTTP.Server.HtmlForm
   Other-modules:
     Network.HTTP.Server.Utils
 
@@ -29,7 +30,8 @@ Library
     network >= 2          && < 3,
     url     >= 2          && < 3,
     HTTP    >= 4000.0.7   && < 5000,
-    utf8-string >= 0.3.4  && < 2
+    utf8-string >= 0.3.4  && < 2,
+    mime    >= 0.3        && < 2
 
   if !os(windows)
     Build-depends:  unix  >= 2 && < 3
