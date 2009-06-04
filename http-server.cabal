@@ -11,6 +11,14 @@ Description:    A library fro writing Haskell web servers.
 Build-type:     Simple
 Cabal-version: >= 1.2
 
+
+Extra-source-files:
+  example/README
+  example/LICENSE
+  example/*.js
+  example/*.hs
+  example/*.cabal
+
 Library
   Exposed-modules:
     Network.HTTP.Server
@@ -38,5 +46,6 @@ Library
     CPP-options:    -D_OS_UNIX
 
   GHC-options:    -O2 -Wall
+
 
 
