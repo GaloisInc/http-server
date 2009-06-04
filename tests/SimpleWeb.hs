@@ -50,7 +50,7 @@ main = server stdLogger "localhost" 8888 $ \_ url request ->
                                  $ toHtml "Static content not found"
                  where hack :: SomeException
                        hack = e
-        _ -> return $ sendHTML OK $
+        ".html" -> return $ sendHTML OK $
                thehtml $ concatHtml
                  [ thead $ concatHtml
                          $ map addScript
@@ -59,11 +59,15 @@ main = server stdLogger "localhost" 8888 $ \_ url request ->
                     [ toHtml "Hello"
                     ]
                  ]
+        _ -> return $ sendHTML NotFound $ toHtml "Not found"
     POST -> jsonHandler jsonExample $ decodeString $ rqBody request
     _ -> return $ sendHTML NotFound $ toHtml "I don't understand"
 
   where addScript x = script noHtml ! [ thetype "text/javascript", src x ]
 
 jsonExample  :: JSValue -> IO JSValue
-jsonExample _ = return $ JSObject $ toJSObject [("success", JSString $ toJSString "hello")]
+jsonExample v =
+  do putStrLn "received:"
+     putStrLn (showJSValue v "")
+     return $ JSObject $ toJSObject [("success", JSString $ toJSString "hello")]
 
