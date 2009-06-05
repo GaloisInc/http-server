@@ -10,7 +10,8 @@
 --
 
 module Network.HTTP.Server
-  ( server, Handler
+  ( server, serverWith, Handler
+  , Config(..), defaultConfig
   , Request(..), Response(..), RequestMethod(..)
   , module Network.HTTP.Headers
   , module Network.HTTP.Server.Response
@@ -38,20 +39,44 @@ import Data.Maybe(fromMaybe)
 
 -- XXX:  Add timeouts to close lingering connections
 
+-- | Server configuration.
+data Config = Config
+  { srvLog  :: Logger       -- ^ Server reports what's going on here.
+  , srvHost :: HostName     -- ^ Host name to bind to.
+  , srvPort :: PortNumber   -- ^ Port to listen on.
+  }
+
+
+-- | Some default options for a server:
+-- no logging output, listen on \"localhost:8000\".
+defaultConfig :: Config
+defaultConfig = Config
+  { srvLog  = quietLogger
+  , srvHost = "localhost"
+  , srvPort = 8000
+  }
+
+
+
+
+
 -- Note: See http://www.haskell.org/ghc/docs/latest/html/libraries/network-2.1.0.0/Network.html#10 for details ob the sigPIPE handler.
-server_init :: Logger -> HostName -> PortNumber -> IO Socket
-server_init lg host_name port_num = withSocketsDo $
+server_init :: Config -> IO Socket
+server_init conf = withSocketsDo $
   do
 #ifdef _OS_UNIX
      P.installHandler P.sigPIPE P.Ignore Nothing
 #endif
+     let host_name = srvHost conf
+         lg        = srvLog conf
+         port_num  = srvPort conf
      hst  <- getHostByName host_name
      s    <- socket (hostFamily hst) Stream =<< getProtocolNumber "TCP"
      setSocketOption s ReuseAddr 1      -- socket level 1 (?)
      case hostAddresses hst of
        h : _ -> bindSocket s (SockAddrInet port_num h)
        _     -> ioError (userError ("Could not resolve host address for: "
-                                                                ++ host_name))
+                                                          ++ host_name))
      listen s sOMAXCONN
 
      logInfo lg 0 ("Listening on " ++ host_name ++ ":" ++ show port_num)
@@ -62,23 +87,22 @@ server_init lg host_name port_num = withSocketsDo $
 -- It is a variation on string of some sort (e.g., String, ByteString, etc.)
 type Handler a = SockAddr -> URL -> Request a -> IO (Response a)
 
--- | Start a server.  Parameters:
---
---   * The logger is used to report what's going on
---     (see "Network.HTTP.Server.Logger")
---
---   * The host name to bind to (often \"localhost\")
---
---   * The port to listen on
---
---   * What do with requests. These are executed in separete threads.
-server :: HStream a => Logger -> HostName -> PortNumber -> Handler a -> IO ()
-server lg host_name port_num handler = withSocketsDo $
-  do s <- server_init lg host_name port_num
+-- | Start a server with the default configureation, and the given handler.
+--  Requests are handled in separete threads.
+server :: HStream a => Handler a -> IO ()
+server = serverWith defaultConfig
+
+-- | Start a server with the given configuration and handler.
+--  Requests are handled in separete threads.
+serverWith :: HStream a => Config -> Handler a -> IO ()
+serverWith conf handler = withSocketsDo $
+  do s <- server_init conf
      loop s `catch` \e ->
        logError lg ("Unexpected (0): " ++ show (e :: SomeException))
      sClose s
   where
+  lg = srvLog conf
+
   loop s = do (client_sock,sock_addr) <- accept s
               forkIO (client client_sock sock_addr)
               loop s
@@ -92,8 +116,9 @@ server lg host_name port_num handler = withSocketsDo $
            let url_txt = show (rqURI req)
            in case importURL url_txt of
                 Just url -> return (Just (url,req))
-                Nothing  -> do logError lg ("Invalid URL: " ++ url_txt)
-                               return Nothing
+                Nothing  ->
+                  do logError lg ("Invalid URL: " ++ url_txt)
+                     return Nothing
 
 
   client sock addr =
