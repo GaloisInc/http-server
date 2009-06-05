@@ -37,7 +37,8 @@ sendScript s v  = insertHeader HdrContentType "application/x-javascript"
                 $ sendText s v
 
 main :: IO ()
-main = server stdLogger "localhost" 8888 $ \_ url request ->
+main = serverWith defaultConfig { srvLog = stdLogger, srvPort = 8888 }
+     $ \_ url request ->
   print request >>
   case rqMethod request of
     GET ->

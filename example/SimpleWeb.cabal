@@ -15,7 +15,7 @@ Executable SimpleWeb
   Main-is:       SimpleWeb.hs
   Build-depends:
     base >= 4,
-    http-server,
+    http-server >= 0.2,
     filepath,
     json,
     xhtml,
