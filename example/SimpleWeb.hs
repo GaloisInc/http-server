@@ -1,5 +1,6 @@
 import Network.HTTP.Server
 import Network.HTTP.Server.Logger
+import Network.HTTP.Server.HtmlForm as Form
 import Network.URL
 import Text.JSON
 import Text.JSON.String(runGetJSON)
@@ -42,29 +43,39 @@ main = serverWith defaultConfig { srvLog = stdLogger, srvPort = 8888 }
   print request >>
   case rqMethod request of
     GET ->
-      case takeExtension (url_path url) of
-        ".js" ->
-          do mb_txt <- try (readFile (url_path url))
-             case mb_txt of
-               Right a -> return $ sendScript OK a
-               Left e  -> return $ sendHTML NotFound
-                                 $ toHtml "Static content not found"
-                 where _hack :: SomeException
-                       _hack = e   -- to specify the type
-        ".html" -> return $ sendHTML OK $
+      do let ext = takeExtension (url_path url)
+         mb_txt <- try (readFile (url_path url))
+         case mb_txt of
+           Right a -> return $ if ext == ".html"
+                                  then sendHTML OK (primHtml a)
+                                  else sendScript OK a
+           Left e -> return $ sendHTML NotFound $
                thehtml $ concatHtml
-                 [ thead $ concatHtml
-                         $ map addScript
-                            [ "jquery-1.3.2.min.js", "myscript.js" ]
+                 [ thead noHtml
                  , body $ concatHtml
-                    [ toHtml "Hello"
+                    [ toHtml "I could not find the file, "
+                    , toHtml "so I made this with xhtml combinators. "
+                    , toHtml $ hotlink "example.html" (toHtml "Try this.")
                     ]
                  ]
-        _ -> return $ sendHTML NotFound $ toHtml "Not found"
-    POST -> jsonHandler jsonExample $ decodeString $ rqBody request
-    _ -> return $ sendHTML NotFound $ toHtml "I don't understand"
 
-  where addScript x = script noHtml ! [ thetype "text/javascript", src x ]
+                 where _hack :: SomeException
+                       _hack = e   -- to specify the type
+
+
+    POST ->
+      case Form.fromRequest request of
+        Just fields ->
+          return $ sendHTML OK $
+          toHtml "You posted:" +++ br +++
+          toHtml (show (Form.toList fields)) +++ br +++
+          hotlink "example.html" (toHtml "back")
+
+        Nothing ->
+          do putStrLn "JSON"
+             jsonHandler jsonExample $ decodeString $ rqBody request
+
+    _ -> return $ sendHTML NotFound $ toHtml "I don't understand"
 
 jsonExample  :: JSValue -> IO JSValue
 jsonExample v =

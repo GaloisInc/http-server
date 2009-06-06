@@ -1,0 +1,35 @@
+<html>
+<head>
+<script type="text/javascript" src="jquery-1.3.2.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+  $('#the_link').click(function() {
+    jQuery.ajax({ url:  '/'
+                , cache: false
+                , data: '{}'
+                , type: 'POST'
+                , dataType: 'json'
+                , contentType: 'application/json'
+                , success: function(d,s){alert(d.success);}
+                });
+  });
+});
+</script>
+</head>
+<body>
+<p>
+When you click on this link, an AJAX request will be sent to the server:
+<a href="" id="the_link">ajax post</a>
+</p>
+
+<p>
+We can also send data to the server with a form:
+<form method="POST" action="/" enctype="multipart/form-data">
+<input type="test" name="input1" />
+<input type="submit">
+</form>
+</p>
+</body>
+</html>
+
