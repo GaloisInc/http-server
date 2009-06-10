@@ -20,7 +20,7 @@ Executable SimpleWeb
     json,
     xhtml,
     utf8-string,
-    url
+    url >= 2.1
   GHC-options: -O -Wall
 
 

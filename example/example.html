@@ -16,20 +16,41 @@ $(document).ready(function(){
   });
 });
 </script>
+<style type="text/css">
+h1
+  { text-align: center
+  ; border: 1px solid #99cc99
+  ; background-color: #ccffcc
+  }
+</style>
 </head>
 <body>
-<p>
-When you click on this link, an AJAX request will be sent to the server:
+<h1>Examples</h1>
+<p>This page demonstrates different ways to exchange information
+with the server.</p>
+
+
+<h2>Posting With AJAX</h2>
+<p>This button uses JavaScript to POST a request to the server:
 <button id="the_link">Ajax Post</button>
 </p>
 
-<p>
-We can also send data to the server with a form:
+<h2>Posting With A Form, URL Encoded</h2>
+<p>We can also send data to the server with a form:</p>
+<form method="POST" action="/">
+<input type="test" name="input1" />
+<input type="submit">
+</form>
+
+<h2>Posting With A Form, Multi-Part</h2>
+<p>We can also send data to the server with a form:</p>
 <form method="POST" action="/" enctype="multipart/form-data">
 <input type="test" name="input1" />
 <input type="submit">
 </form>
-</p>
+
+
+
 </body>
 </html>
 
