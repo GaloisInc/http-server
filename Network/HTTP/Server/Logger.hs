@@ -91,6 +91,3 @@ filterLog limit choose ls = case limit of
                               Just n -> take n allItems
                               _ -> allItems
   where allItems = filter (choose . item_type) ls
-
-
-

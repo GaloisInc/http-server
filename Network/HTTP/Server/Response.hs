@@ -68,5 +68,3 @@ statusCodeTriplet x = case x of
   Conflict            -> (4,0,9)
   InternalServerError -> (5,0,0)
   NotImplemented      -> (5,0,1)
-
-

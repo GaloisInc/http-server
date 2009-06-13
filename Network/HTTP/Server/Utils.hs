@@ -54,5 +54,3 @@ ppSockAddr (SockAddrInet6 port _ addr _) =
   ppHostAddress6 addr . showChar ':' . shows port
 ppSockAddr (SockAddrUnix sock) = showString "unix/" . showString sock
 #endif
-
-

@@ -50,7 +50,7 @@ main = serverWith defaultConfig { srvLog = stdLogger, srvPort = 8888 }
               hotlink "example.html" (toHtml "back")
             Nothing -> sendHTML BadRequest $
               toHtml "Could not understand URL encoded form data"
- 
+
           | "multipart/form-data" `isPrefixOf` ty ->
           case Form.fromRequest request of
             Just fields -> sendHTML OK $
@@ -59,21 +59,21 @@ main = serverWith defaultConfig { srvLog = stdLogger, srvPort = 8888 }
               hotlink "example.html" (toHtml "back")
             Nothing -> sendHTML BadRequest $
               toHtml "Could not understand multipart form data"
-    
+
           | "application/json" `isPrefixOf` ty ->
           case runGetJSON readJSValue txt of
             Right _  -> sendJSON OK $
               JSObject $ toJSObject [("success", JSString $ toJSString "hello")]
             Left err -> sendJSON BadRequest $
               JSObject $ toJSObject [("error", JSString $ toJSString err)]
-           
+
         x -> sendHTML BadRequest $
              toHtml $ "I don't know how to deal with POSTed content" ++
                       " of type " ++ show x
 
         -- we assume UTF8 encoding
         where txt = decodeString (rqBody request)
-    
+
     _ -> return $ sendHTML BadRequest $ toHtml "I don't understand"
 
 
@@ -96,5 +96,3 @@ sendHTML s v    = insertHeader HdrContentType "text/html"
 sendScript     :: StatusCode -> String -> Response String
 sendScript s v  = insertHeader HdrContentType "application/x-javascript"
                 $ sendText s v
-
-

@@ -73,4 +73,3 @@ mime_request req
   = let hdrs = map (\ (Header a b) -> (show a, b)) (rqHeaders req)
         body = rqBody req
     in parseMIMEBody hdrs body
-

@@ -125,7 +125,7 @@ serverWith conf handler = withSocketsDo $
     do let name = ppSockAddr addr ""
        logInfo lg 0 ("Accepted connection from " ++ name)
        conn <- socketConnection name sock    -- XXX: name?
-       setStreamHooks conn nullHooks { hook_close = 
+       setStreamHooks conn nullHooks { hook_close =
           logInfo lg 0 ("Closing  connection to " ++ ppSockAddr addr "")
              }
        client_interact addr conn
@@ -182,5 +182,3 @@ authorityToAuth a =
            (Just x, Just y) -> x ++ ":" ++ y
            (Just x, Nothing) -> x
            _ -> ""
-
-
