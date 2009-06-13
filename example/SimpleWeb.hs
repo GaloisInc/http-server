@@ -62,9 +62,9 @@ main = serverWith defaultConfig { srvLog = stdLogger, srvPort = 8888 }
     
           | "application/json" `isPrefixOf` ty ->
           case runGetJSON readJSValue txt of
-            Right val -> sendJSON OK $
+            Right _  -> sendJSON OK $
               JSObject $ toJSObject [("success", JSString $ toJSString "hello")]
-            Left err  -> sendJSON BadRequest $
+            Left err -> sendJSON BadRequest $
               JSObject $ toJSObject [("error", JSString $ toJSString err)]
            
         x -> sendHTML BadRequest $
