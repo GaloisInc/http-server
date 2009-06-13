@@ -27,10 +27,10 @@ main = serverWith defaultConfig { srvLog = stdLogger, srvPort = 8888 }
                thehtml $ concatHtml
                  [ thead noHtml
                  , body $ concatHtml
-                    [ toHtml "I could not find"
-                    , toHtml (url_path url)
-                    , toHtml ", so I made this with xhtml combinators. "
-                    , toHtml $ hotlink "example.html" (toHtml "Try this.")
+                    [ toHtml "I could not find "
+                    , toHtml $ "\"" ++ (if null (url_path url) then "/" else url_path url) ++ "\""
+                    , toHtml ", so I made this with XHTML combinators. "
+                    , toHtml $ hotlink "example.html" (toHtml "Try this instead.")
                     ]
                  ]
 
