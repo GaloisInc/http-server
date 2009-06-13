@@ -87,13 +87,13 @@ server_init conf = withSocketsDo $
 -- It is a variation on string of some sort (e.g., String, ByteString, etc.)
 type Handler a = SockAddr -> URL -> Request a -> IO (Response a)
 
--- | Start a server with the default configureation, and the given handler.
---  Requests are handled in separete threads.
+-- | Start a server with the default configuration, and the given handler.
+--  Requests are handled in separate threads.
 server :: HStream a => Handler a -> IO ()
 server = serverWith defaultConfig
 
 -- | Start a server with the given configuration and handler.
---  Requests are handled in separete threads.
+--  Requests are handled in separate threads.
 serverWith :: HStream a => Config -> Handler a -> IO ()
 serverWith conf handler = withSocketsDo $
   do s <- server_init conf

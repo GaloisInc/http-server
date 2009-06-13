@@ -28,13 +28,13 @@ data StatusCode
 
 
 
--- | Make a simple response with the given staus and body.
--- Intended to be used for (bad) erros.
+-- | Make a simple response with the given status and body.
+-- Intended to be used for (bad) errors.
 -- Adds a "close" header.
 err_response :: BufferType a => StatusCode -> Response a
 err_response = insertHeader HdrConnection "close" . respond
 
--- | Make a simple response with the given staus and body.
+-- | Make a simple response with the given status and body.
 -- No headers or body.
 respond :: BufferType a => StatusCode -> Response a
 respond code = Response
