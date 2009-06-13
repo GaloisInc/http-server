@@ -1,51 +1,49 @@
-Name:           http-server
-Version:        1
-License:        BSD3
-License-file:   LICENSE
-Author:         Galois Inc
-Maintainer:     diatchki@galois.com
-Homepage:       http://code.galois.com/
-Category:       Network
-Synopsis:       A library fro writing Haskell web servers.
-Description:    A library fro writing Haskell web servers.
-Build-type:     Simple
-Cabal-version: >= 1.2
+name:          http-server
+version:       1
+category:      Network
+synopsis:      A library for writing Haskell web servers.
+description:   A library for writing Haskell web servers.
+author:        Galois, Inc.
+maintainer:    diatchki@galois.com
+license:       BSD3
+license-file:  LICENSE
+homepage:      http://code.galois.com/
+cabal-version: >= 1.2
+build-type:    Simple
 
-
-Extra-source-files:
+extra-source-files:
   example/README
-  example/LICENSE
   example/*.js
   example/*.hs
   example/*.cabal
 
-Library
-  Exposed-modules:
+library
+  exposed-modules:
     Network.HTTP.Server
+    Network.HTTP.Server.HtmlForm
     Network.HTTP.Server.Logger
     Network.HTTP.Server.Response
-    Network.HTTP.Server.HtmlForm
-  Other-modules:
+  other-modules:
     Network.HTTP.Server.Utils
 
-  Extensions:
+  extensions:
     CPP
     UndecidableInstances
 
-  -- Why the commas?
-  Build-depends:
-    base    >= 4          && < 5,
-    network >= 2          && < 3,
-    url     >= 2          && < 3,
-    HTTP    >= 4000.0.7   && < 5000,
-    utf8-string >= 0.3.4  && < 2,
-    mime    >= 0.3        && < 2
+  build-depends:
+    HTTP        >= 4000.0.7 && < 5000,
+    base        >= 4        && < 5,
+    mime        >= 0.3      && < 2,
+    network     >= 2        && < 3,
+    url         >= 2        && < 3,
+    utf8-string >= 0.3.4    && < 2
 
   if !os(windows)
-    Build-depends:  unix  >= 2 && < 3
-    CPP-options:    -D_OS_UNIX
+    build-depends: unix >= 2 && < 3
+    CPP-options:   -D_OS_UNIX
 
-  GHC-options:    -O2 -Wall
+  ghc-options: -Wall -O2
 
-
-
+source-repository head
+  type:     git
+  location: git://code.galois.com/http-server.git
