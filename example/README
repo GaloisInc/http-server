@@ -1,8 +1,6 @@
-Here we have a simple server that demonstrates how one
-could use the http-server library.
+Here we have a simple server that demonstrates how one could use the
+http-server library.
 
-NOTE:
-The version of jQuery in this directory is used to illustrate how a
-client may send ajax requests to the server.  This is just for demo
-purposes.  We are using jQuery with its MIT license.
-
+NOTE: The version of jQuery in this directory is used to illustrate how a
+client may send AJAX requests to the server. This is just for demo purposes.
+We are using jQuery with its MIT license.
