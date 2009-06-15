@@ -28,7 +28,7 @@ main = serverWith defaultConfig { srvLog = stdLogger, srvPort = 8888 }
                  [ thead noHtml
                  , body $ concatHtml
                     [ toHtml "I could not find "
-                    , toHtml $ "\"" ++ (if null (url_path url) then "/" else url_path url) ++ "\""
+                    , toHtml $ exportURL url { url_type = HostRelative }
                     , toHtml ", so I made this with XHTML combinators. "
                     , toHtml $ hotlink "example.html" (toHtml "Try this instead.")
                     ]
