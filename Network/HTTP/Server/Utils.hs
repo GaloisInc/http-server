@@ -54,3 +54,23 @@ ppSockAddr (SockAddrInet6 port _ addr _) =
   ppHostAddress6 addr . showChar ':' . shows port
 ppSockAddr (SockAddrUnix sock) = showString "unix/" . showString sock
 #endif
+
+-- |Extract the host address from a SockAddr and pretty print
+ppHostAddr :: SockAddr -> String
+ppHostAddr (SockAddrInet _ addr) = ppHostAddress addr ""
+#ifdef _OS_UNIX
+ppHostAddr (SockAddrInet6 _ _ addr _) = ppHostAddress6 addr ""
+ppHostAddr a@(SockAddrUnix _) = ppSockAddr a ""
+#endif
+
+-- |Extract the port number from a SockAddr
+portFromSockAddr :: SockAddr -> Int
+portFromSockAddr (SockAddrInet port _) = fromInteger $ toInteger port
+#ifdef _OS_UNIX
+portFromSockAddr (SockAddrInet6 port _ _ _) = fromInteger $ toInteger port
+portFromSockAddr (SockAddrUnix _) = -1 -- according to documentation
+                                       -- of Network.accept, "When
+                                       -- using AF_UNIX, HostName will
+                                       -- be set to the path of the
+                                       -- socet and PortNumber of -1.
+#endif
