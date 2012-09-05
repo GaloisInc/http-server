@@ -65,7 +65,7 @@ server_init :: Config -> IO Socket
 server_init conf = withSocketsDo $
   do
 #ifdef _OS_UNIX
-     P.installHandler P.sigPIPE P.Ignore Nothing
+     _ <- P.installHandler P.sigPIPE P.Ignore Nothing
 #endif
      let host_name = srvHost conf
          lg        = srvLog conf
@@ -104,7 +104,7 @@ serverWith conf handler = withSocketsDo $
   lg = srvLog conf
 
   loop s = do (client_sock,sock_addr) <- accept s
-              forkIO (client client_sock sock_addr)
+              _ <- forkIO (client client_sock sock_addr)
               loop s
 
   -- get_request :: HandleStream a -> IO (Maybe (URL, Request a))
