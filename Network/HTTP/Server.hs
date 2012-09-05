@@ -122,14 +122,15 @@ serverWith conf handler = withSocketsDo $
 
 
   client sock addr =
-    do let name = ppSockAddr addr ""
-       logInfo lg 0 ("Accepted connection from " ++ name)
-       conn <- socketConnection name sock    -- XXX: name?
+    do let client_host = ppHostAddr addr
+       let portnum = portFromSockAddr addr
+       let client_addr = ppSockAddr addr ""    
+       logInfo lg 0 ("Accepted connection from " ++ client_addr)
+       conn <- socketConnection client_host portnum sock
        setStreamHooks conn nullHooks { hook_close =
-          logInfo lg 0 ("Closing  connection to " ++ ppSockAddr addr "")
+          logInfo lg 0 ("Closing  connection to " ++ client_addr)
              }
        client_interact addr conn
-
 
   -- client_interact :: SockAddr -> HandleStream a -> IO ()
   client_interact addr conn =
