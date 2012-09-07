@@ -26,7 +26,7 @@ data StatusCode
   | ResetContent -- ^ 205
   | PartialContent -- ^ 206
   | MultipleChoices -- ^ 300
-  | MovedPermantently -- ^ 301
+  | MovedPermanently -- ^ 301
   | Found  -- ^ 302
   | SeeOther -- ^ 303
   | NotModified -- ^ 304
@@ -86,7 +86,7 @@ reason code = case code of
   ResetContent -> "Reset content"
   PartialContent -> "Partial content"
   MultipleChoices -> "Multiple choices"
-  MovedPermantently -> "Moved permanently"
+  MovedPermanently -> "Moved permanently"
   Found  -> "Found"
   SeeOther -> "See other"
   NotModified -> "Not modified"
@@ -129,7 +129,7 @@ statusCodeTriplet x = case x of
   ResetContent -> (2,0,5)
   PartialContent -> (2,0,6)
   MultipleChoices -> (3,0,0)
-  MovedPermantently -> (3,0,1)
+  MovedPermanently -> (3,0,1)
   Found  -> (3,0,2)
   SeeOther -> (3,0,3)
   NotModified -> (3,0,4)
