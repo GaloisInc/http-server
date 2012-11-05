@@ -26,7 +26,8 @@ import Prelude hiding (catch)
 import qualified System.Posix.Signals as P
                         (installHandler,sigPIPE,Handler(Ignore))
 #endif
-import Network.Socket
+import Network.Socket hiding (close)
+import qualified Network.Socket as Socket (close)
 import Network.BSD
 import Network.HTTP
 import Network.HTTP.Headers   -- for re-export above
@@ -99,7 +100,7 @@ serverWith conf handler = withSocketsDo $
   do s <- server_init conf
      loop s `catch` \e ->
        logError lg ("Unexpected (0): " ++ show (e :: SomeException))
-     sClose s
+     Socket.close s
   where
   lg = srvLog conf
 
