@@ -21,12 +21,18 @@ import Network.HTTP.Server.Utils
 import Network.HTTP.Server.Logger
 import Network.HTTP.Server.Response
 
+#ifndef NO_PRELUDE_CATCH
 import Prelude hiding (catch)
+#endif
+
 #ifdef _OS_UNIX
 import qualified System.Posix.Signals as P
                         (installHandler,sigPIPE,Handler(Ignore))
 #endif
 import Network.Socket
+    (Socket,socket,withSocketsDo,SocketType(..),SocketOption(..)
+    ,setSocketOption,SockAddr(..),listen,bindSocket,sClose,accept
+    ,sOMAXCONN)
 import Network.BSD
 import Network.HTTP
 import Network.HTTP.Headers   -- for re-export above
