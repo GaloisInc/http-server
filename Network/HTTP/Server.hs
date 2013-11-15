@@ -31,8 +31,9 @@ import qualified System.Posix.Signals as P
 #endif
 import Network.Socket
     (Socket,socket,withSocketsDo,SocketType(..),SocketOption(..)
-    ,setSocketOption,SockAddr(..),listen,bindSocket,sClose,accept
+    ,setSocketOption,SockAddr(..),listen,bindSocket,accept
     ,sOMAXCONN)
+import qualified Network.Socket as Socket (close)
 import Network.BSD
 import Network.HTTP
 import Network.HTTP.Headers   -- for re-export above
@@ -105,7 +106,7 @@ serverWith conf handler = withSocketsDo $
   do s <- server_init conf
      loop s `catch` \e ->
        logError lg ("Unexpected (0): " ++ show (e :: SomeException))
-     sClose s
+     Socket.close s
   where
   lg = srvLog conf
 
