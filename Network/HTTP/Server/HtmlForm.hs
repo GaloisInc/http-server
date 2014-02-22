@@ -17,6 +17,8 @@ module Network.HTTP.Server.HtmlForm
   , fromRequest
   ) where
 
+import qualified Data.Text as T
+
 import Codec.MIME.Parse
 import Codec.MIME.Type
 import Network.HTTP
@@ -61,7 +63,7 @@ fromRequest r = let mv = mime_request r
 
   where toMap mv = case mime_val_content mv of
                      Multi vs -> concatMap toMap vs
-                     Single v -> [ (UTF8.decodeString k, v)
+                     Single v -> [ (UTF8.decodeString (T.unpack k),T.unpack v)
                                               | k <- keys (mime_val_disp mv) ]
 
         -- XXX: should we check the type?
@@ -70,6 +72,6 @@ fromRequest r = let mv = mime_request r
 
 mime_request :: Request String -> MIMEValue
 mime_request req
-  = let hdrs = map (\ (Header a b) -> (show a, b)) (rqHeaders req)
-        body = rqBody req
+  = let hdrs = map (\ (Header a b) -> MIMEParam { paramName = T.pack (show a), paramValue = T.pack b }) (rqHeaders req)
+        body = T.pack $ rqBody req
     in parseMIMEBody hdrs body
