@@ -63,7 +63,7 @@ fromRequest r = let mv = mime_request r
 
   where toMap mv = case mime_val_content mv of
                      Multi vs -> concatMap toMap vs
-                     Single v -> [ (UTF8.decodeString (T.unpack k),T.unpack v)
+                     Single v -> [ (T.unpack k,T.unpack v)
                                               | k <- keys (mime_val_disp mv) ]
 
         -- XXX: should we check the type?
