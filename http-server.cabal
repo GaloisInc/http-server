@@ -1,5 +1,5 @@
 name:          http-server
-version:       1.0.3
+version:       1.0.4
 category:      Network
 synopsis:      A library for writing Haskell web servers.
 description:   A library for writing Haskell web servers.
