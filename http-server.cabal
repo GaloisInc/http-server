@@ -7,7 +7,7 @@ author:        Galois, Inc.
 maintainer:    diatchki@galois.com
 license:       BSD3
 license-file:  LICENSE
-homepage:      http://code.galois.com/
+homepage:      https://github.com/GaloisInc/http-server
 cabal-version: >= 1.6
 build-type:    Simple
 
@@ -50,4 +50,4 @@ library
 
 source-repository head
   type:     git
-  location: git://code.galois.com/http-server.git
+  location: https://github.com/GaloisInc/http-server.git
