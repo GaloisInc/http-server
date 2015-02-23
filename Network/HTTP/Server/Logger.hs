@@ -16,8 +16,7 @@ module Network.HTTP.Server.Logger
   , showLogItem, readLogItem, filterLog
   ) where
 
-import System.IO (Handle,stdout,stderr,hFlush)
-import qualified System.IO.UTF8 as UTF8 (hPutStrLn)
+import System.IO (Handle,stdout,stderr,hFlush,hPutStrLn)
 
 -- | A type used by the server to report various events.
 -- Useful for debugging.
@@ -64,7 +63,7 @@ utf8Logger h hErr =
     }
 
 logUTF8 :: Handle -> LogItem -> IO ()
-logUTF8 h i = UTF8.hPutStrLn h (showLogItem i) >> hFlush h
+logUTF8 h i = hPutStrLn h (showLogItem i) >> hFlush h
 
 
 data LogType  = Error | Warning | Debug | Info Int  deriving Show
