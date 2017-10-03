@@ -63,7 +63,7 @@ data StatusCode
 err_response :: BufferType a => StatusCode -> Response a
 err_response code = insertHeader HdrConnection "close" (respond code)
 
--- | Make a simple response with the given status and body.
+-- | Make a simple response with the given status.
 -- No headers or body.
 respond :: BufferType a => StatusCode -> Response a
 respond code = Response
